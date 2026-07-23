@@ -1,16 +1,18 @@
 const express = require("express");
 
+const loggerMiddleware = require("./middlewares/logger.middleware");
+const requestTimeMiddleware = require("./middlewares/requestTime.middleware");
+
+const routes = require("./routes");
+
 const app = express();
 
-// Built-in middleware to parse JSON request bodies
 app.use(express.json());
 
-// Health check endpoint
-app.get("/", (req, res) => {
-    res.json({
-        success: true,
-        message: "Task Manager API is running"
-    });
-});
+app.use(loggerMiddleware);
+
+app.use(requestTimeMiddleware);
+
+app.use("/", routes);
 
 module.exports = app;

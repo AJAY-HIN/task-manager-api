@@ -1,0 +1,13 @@
+const express = require("express");
+
+const router = express.Router();
+
+router.get("/", (req, res) => {
+    res.json({
+        success: true,
+        message: "Task Manager API is running",
+        requestTime: req.requestTime
+    });
+});
+
+module.exports = router;
