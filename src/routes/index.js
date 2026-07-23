@@ -1,6 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
+const userRoutes = require("./user.routes");
 
 router.get("/", (req, res) => {
     res.json({
@@ -9,5 +10,7 @@ router.get("/", (req, res) => {
         requestTime: req.requestTime
     });
 });
+
+router.use("/api/v1/users", userRoutes);
 
 module.exports = router;
