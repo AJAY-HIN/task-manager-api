@@ -1,0 +1,390 @@
+.pageContainer {
+    --primary: #8b5cf6;
+    --primary-hover: #7c3aed;
+    --primary-glow: rgba(139, 92, 246, 0.35);
+    --bg-dark: #09090b;
+    --bg-card: rgba(20, 20, 25, 0.6);
+    --bg-input: rgba(10, 10, 12, 0.4);
+    --text-primary: #f4f4f5;
+    --text-muted: #a1a1aa;
+    --text-placeholder: #52525b;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-focus: rgba(139, 92, 246, 0.5);
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.1);
+    --success-border: rgba(16, 185, 129, 0.2);
+    --error: #ef4444;
+    --error-bg: rgba(239, 68, 68, 0.1);
+    --error-border: rgba(239, 68, 68, 0.25);
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--bg-dark);
+    position: relative;
+    overflow-x: hidden;
+    color: var(--text-primary);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* Background Glowing Orbs */
+.glowBg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.glowOrb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.15;
+    animation: pulse 12s infinite alternate ease-in-out;
+}
+
+.orb1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+    top: -10%;
+    left: -10%;
+}
+
+.orb2 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+    bottom: -15%;
+    right: -10%;
+    animation-delay: -6s;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(5%, 5%) scale(1.1);
+    }
+}
+
+/* Card Container */
+.container {
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+    z-index: 10;
+}
+
+.signupCard {
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 40px 32px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: var(--transition-smooth);
+}
+
+.signupCard:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15),
+                0 0 40px rgba(139, 92, 246, 0.05);
+}
+
+/* Brand styling */
+.brand {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.logo {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px var(--primary-glow);
+    color: white;
+}
+
+.brand h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+    background: linear-gradient(to right, #ffffff, #d8b4fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.formTitle {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+/* Input Fields */
+.inputGroup {
+    margin-bottom: 18px;
+    position: relative;
+}
+
+.inputGroup label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.inputWrapper input {
+    width: 100%;
+    height: 48px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0 44px;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.inputWrapper input::placeholder {
+    color: var(--text-placeholder);
+}
+
+.inputWrapper input:focus {
+    border-color: var(--border-focus);
+    background-color: rgba(20, 20, 25, 0.8);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.fieldIcon {
+    position: absolute;
+    left: 16px;
+    width: 16px;
+    height: 16px;
+    fill: var(--text-placeholder);
+    pointer-events: none;
+    transition: var(--transition-smooth);
+}
+
+.inputWrapper input:focus ~ .fieldIcon {
+    fill: var(--primary);
+}
+
+.togglePassword {
+    position: absolute;
+    right: 16px;
+    width: 18px;
+    height: 18px;
+    fill: var(--text-placeholder);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    z-index: 5;
+}
+
+.togglePassword:hover {
+    fill: var(--text-primary);
+}
+
+/* Status Icons & Validation States */
+.statusIcon {
+    position: absolute;
+    right: 16px;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: var(--transition-smooth);
+}
+
+.inputGroupSuccess .statusIcon.successIcon {
+    opacity: 1;
+    transform: scale(1);
+    fill: var(--success);
+}
+
+.inputGroupError .statusIcon.errorIcon {
+    opacity: 1;
+    transform: scale(1);
+    fill: var(--error);
+}
+
+.inputGroupError input {
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.inputGroupError input:focus {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+    border-color: var(--error);
+}
+
+.errorText {
+    display: block;
+    font-size: 11px;
+    color: var(--error);
+    margin-top: 6px;
+    margin-left: 4px;
+    transition: var(--transition-smooth);
+}
+
+/* Submit Button */
+.btn {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.btnPrimary {
+    background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px var(--primary-glow);
+}
+
+.btnPrimary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.45);
+}
+
+.btnPrimary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.btnSpinner {
+    animation: spin 1s linear infinite;
+    width: 16px;
+    height: 16px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Alert Banners */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.alertIcon {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+}
+
+.alertSuccess {
+    background-color: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: #a7f3d0;
+}
+
+.alertSuccess .alertIcon {
+    fill: var(--success);
+}
+
+.alertError {
+    background-color: var(--error-bg);
+    border: 1px solid var(--error-border);
+    color: #fca5a5;
+}
+
+.alertError .alertIcon {
+    fill: var(--error);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Footer styling */
+.cardFooter {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 550;
+    transition: var(--transition-smooth);
+}
+
+.link:hover {
+    color: #a78bfa;
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .signupCard {
+        padding: 32px 20px;
+        border-radius: 20px;
+    }
+}
