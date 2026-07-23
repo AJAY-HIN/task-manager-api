@@ -2,6 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const userRoutes = require("./user.routes");
+const authRoutes = require("./auth.routes");
 
 router.get("/", (req, res) => {
     res.json({
@@ -12,5 +13,7 @@ router.get("/", (req, res) => {
 });
 
 router.use("/api/v1/users", userRoutes);
+
+router.use("/api/v1/auth", authRoutes);
 
 module.exports = router;
