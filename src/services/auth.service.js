@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 
 const userRepository = require('../repositories/user.repository');
 const ConflictError = require('../errors/ConflictError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
+const { generateAccessToken } = require('../utils/jwt');
 
 class AuthService {
   async signup(userData) {
@@ -23,6 +25,34 @@ class AuthService {
       id: newUser.id,
       name: newUser.name,
       email: newUser.email,
+    };
+  }
+
+  async login(credentials) {
+    const user = await userRepository.findByEmail(credentials.email);
+
+    if (!user) {
+      throw new UnauthorizedError();
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
+
+    if (!isPasswordCorrect) {
+      throw new UnauthorizedError();
+    }
+
+    const accessToken = generateAccessToken(user);
+
+    return {
+      user: {
+        id: user.id,
+
+        name: user.name,
+
+        email: user.email,
+      },
+
+      accessToken,
     };
   }
 }

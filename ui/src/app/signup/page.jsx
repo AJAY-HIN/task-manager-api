@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import styles from './signup.module.css';
 
 export default function SignupPage() {
@@ -358,9 +359,9 @@ export default function SignupPage() {
           <div className={styles.cardFooter}>
             <p>
               Already have an account?{' '}
-              <a href="#" className={styles.link}>
+              <Link href="/login" className={styles.link}>
                 Sign In
-              </a>
+              </Link>
             </p>
           </div>
         </div>

@@ -1,6 +1,5 @@
 const express = require('express');
-const validate = require('../middlewares/validation.middleware');
-const { signupValidator } = require('../validators/auth.validator');
+const { signupValidator, loginValidator } = require('../validators/auth.validator');
 
 const router = express.Router();
 
@@ -9,5 +8,5 @@ const validationMiddleware = require('../middlewares/validation.middleware');
 const asyncHandler = require('../utils/asyncHandler');
 
 router.post('/signup', signupValidator, validationMiddleware, asyncHandler(authController.signup));
-
+router.post('/login', loginValidator, validationMiddleware, asyncHandler(authController.login));
 module.exports = router;

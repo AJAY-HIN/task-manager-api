@@ -23,6 +23,13 @@ const signupValidator = [
     .withMessage('Password must contain one special character'),
 ];
 
+const loginValidator = [
+  body('email').isEmail().withMessage('Invalid email'),
+
+  body('password').notEmpty().withMessage('Password is required'),
+];
+
 module.exports = {
   signupValidator,
+  loginValidator,
 };
