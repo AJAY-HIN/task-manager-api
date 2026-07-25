@@ -1,14 +1,16 @@
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 
 dotenv.config();
 
-if (!process.env.PORT) {
-    throw new Error("PORT environment variable is required.");
-}
+module.exports = {
+  nodeEnv: process.env.NODE_ENV,
+  port: Number(process.env.PORT),
 
-const config = {
-    nodeEnv: process.env.NODE_ENV || "development",
-    port: Number(process.env.PORT)
+  database: {
+    host: process.env.DB_HOST,
+    port: Number(process.env.DB_PORT),
+    database: process.env.DB_NAME,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+  },
 };
-
-module.exports = config;

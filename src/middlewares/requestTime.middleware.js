@@ -1,7 +1,7 @@
 function requestTimeMiddleware(req, res, next) {
-    req.requestTime = new Date().toISOString();
+  req.requestTime = new Date().toISOString();
 
-    next();
+  next();
 }
 
 module.exports = requestTimeMiddleware;

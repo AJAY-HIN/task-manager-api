@@ -1,11 +1,11 @@
-const userRepository = require("../repositories/user.repository");
+const userRepository = require('../repositories/user.repository');
 
 class UserService {
-    async getUsers() {
-        const users = await userRepository.findAll();
+  async getUsers() {
+    const users = await userRepository.findAll();
 
-        return users;
-    }
+    return users;
+  }
 }
 
 module.exports = new UserService();

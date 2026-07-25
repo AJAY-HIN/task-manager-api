@@ -1,9 +1,9 @@
 function loggerMiddleware(req, res, next) {
-    console.log("========== REQUEST ==========");
-    console.log(`${req.method} ${req.url}`);
-    console.log("=============================");
+  console.log('========== REQUEST ==========');
+  console.log(`${req.method} ${req.url}`);
+  console.log('=============================');
 
-    next();
+  next();
 }
 
 module.exports = loggerMiddleware;
