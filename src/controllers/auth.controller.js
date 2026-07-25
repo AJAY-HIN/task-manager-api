@@ -1,3 +1,5 @@
+const authService = require('../services/auth.service');
+
 class AuthController {
   async signup(req, res) {
     const user = await authService.signup(req.body);
@@ -11,3 +13,5 @@ class AuthController {
     });
   }
 }
+
+module.exports = new AuthController();

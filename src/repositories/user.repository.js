@@ -16,6 +16,10 @@ class UserRepository {
   async findById(id) {
     return User.findByPk(id);
   }
+
+  async findAll() {
+    return User.findAll();
+  }
 }
 
 module.exports = new UserRepository();

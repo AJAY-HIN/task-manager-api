@@ -27,5 +27,6 @@ app.use(requestTimeMiddleware);
 
 app.use('/', routes);
 app.use(errorHandler);
+app.use(errorHandler);
 
 module.exports = app;
