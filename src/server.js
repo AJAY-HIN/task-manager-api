@@ -1,6 +1,7 @@
 const app = require('./app');
 const config = require('./config/env');
 const sequelize = require('./database/sequelize');
+const { User, RefreshToken } = require('./models');
 
 async function startServer() {
   try {

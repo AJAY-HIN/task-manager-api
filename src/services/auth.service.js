@@ -3,7 +3,11 @@ const bcrypt = require('bcrypt');
 const userRepository = require('../repositories/user.repository');
 const ConflictError = require('../errors/ConflictError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
-const { generateAccessToken } = require('../utils/jwt');
+const { generateAccessToken, generateRefreshToken } = require('../utils/jwt');
+const { hashToken } = require('../utils/token');
+const refreshTokenRepository = require('../repositories/refresh-token.repository');
+const jwt = require('jsonwebtoken');
+const config = require('../config/env');
 
 class AuthService {
   async signup(userData) {
@@ -41,7 +45,23 @@ class AuthService {
       throw new UnauthorizedError();
     }
 
+    // Generate Access Token
     const accessToken = generateAccessToken(user);
+
+    // Generate Refresh Token
+    const refreshToken = generateRefreshToken(user);
+
+    // Hash Refresh Token
+    const tokenHash = hashToken(refreshToken);
+
+    // Save Refresh Token in Database
+    await refreshTokenRepository.create({
+      userId: user.id,
+
+      tokenHash,
+
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
 
     return {
       user: {
@@ -52,6 +72,36 @@ class AuthService {
         email: user.email,
       },
 
+      accessToken,
+
+      refreshToken,
+    };
+  }
+
+  async refreshToken(token) {
+    const hashedToken = hashToken(token);
+
+    const storedToken = await refreshTokenRepository.findByHash(hashedToken);
+
+    if (!storedToken) {
+      throw new UnauthorizedError('Refresh token is invalid');
+    }
+
+    if (storedToken.expiresAt < new Date()) {
+      throw new UnauthorizedError('Refresh token has expired');
+    }
+
+    const payload = jwt.verify(token, config.jwt.secret);
+
+    const user = await userRepository.findById(payload.id);
+
+    if (!user) {
+      throw new UnauthorizedError();
+    }
+
+    const accessToken = generateAccessToken(user);
+
+    return {
       accessToken,
     };
   }

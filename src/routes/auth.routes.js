@@ -9,4 +9,5 @@ const asyncHandler = require('../utils/asyncHandler');
 
 router.post('/signup', signupValidator, validationMiddleware, asyncHandler(authController.signup));
 router.post('/login', loginValidator, validationMiddleware, asyncHandler(authController.login));
+router.post('/refresh-token', asyncHandler(authController.refreshToken));
 module.exports = router;
