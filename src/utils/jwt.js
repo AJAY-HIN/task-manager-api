@@ -7,6 +7,7 @@ function generateAccessToken(user) {
     {
       id: user.id,
       email: user.email,
+      role: user.role,
     },
     config.jwt.secret,
     {

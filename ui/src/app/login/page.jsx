@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "../signup/signup.module.css";
 
 export default function LoginPage() {
+    const router = useRouter();
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [touched, setTouched] = useState({ email: false, password: false });
     const [showPassword, setShowPassword] = useState(false);
@@ -56,13 +58,17 @@ export default function LoginPage() {
             const result = await response.json();
 
             if (response.ok && result.success) {
-                setAlert({ type: "success", message: "Login successful!" });
+                setAlert({ type: "success", message: "Login successful! Redirecting..." });
                 
                 // Save access token to localStorage
                 if (result.data && result.data.accessToken) {
                     localStorage.setItem("accessToken", result.data.accessToken);
                     localStorage.setItem("user", JSON.stringify(result.data.user));
                 }
+                
+                setTimeout(() => {
+                    router.push("/users");
+                }, 1000);
             } else {
                 setAlert({ type: "error", message: result.message || "Invalid email or password." });
             }

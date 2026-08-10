@@ -10,6 +10,6 @@ const router = express.Router();
 router.get('/me', authMiddleware, asyncHandler(userController.getMe));
 
 // List all users (admin only)
-router.get('/', authMiddleware, authorize('admin'), asyncHandler(userController.getUsers));
+router.get('/', authMiddleware, authorize('ADMIN'), asyncHandler(userController.getUsers));
 
 module.exports = router;
