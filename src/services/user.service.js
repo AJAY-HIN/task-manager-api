@@ -6,6 +6,10 @@ class UserService {
 
     return users;
   }
+
+  async findById(id) {
+    return await userRepository.findById(id);
+  }
 }
 
 module.exports = new UserService();
