@@ -38,8 +38,20 @@ export default function UsersPage() {
                         }
                     });
 
-                    if (response.status === 401 || response.status === 403) {
-                        setError("Unauthorized: You do not have permissions to view this resource. ADMIN role is required.");
+                    if (response.status === 401) {
+                        setError({ message: "Session expired. Please log in again.", status: 401 });
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (response.status === 403) {
+                        setError({ message: "Unauthorized: You do not have permissions to view this resource. ADMIN role is required.", status: 403 });
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (response.status === 429) {
+                        setError({ message: "Too many requests. Please try again later.", status: 429 });
                         setLoading(false);
                         return;
                     }
@@ -58,7 +70,7 @@ export default function UsersPage() {
                     }
                 } catch (err) {
                     console.error("Failed to fetch users:", err);
-                    setError(err.message || "Failed to load users list.");
+                    setError({ message: err.message || "Failed to load users list.", status: 500 });
                 } finally {
                     setLoading(false);
                 }
@@ -76,8 +88,20 @@ export default function UsersPage() {
                         }
                     });
 
-                    if (response.status === 401 || response.status === 403) {
-                        setError("Unauthorized: You do not have permission to view this profile.");
+                    if (response.status === 401) {
+                        setError({ message: "Session expired. Please log in again.", status: 401 });
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (response.status === 403) {
+                        setError({ message: "Unauthorized: You do not have permission to view this profile.", status: 403 });
+                        setLoading(false);
+                        return;
+                    }
+
+                    if (response.status === 429) {
+                        setError({ message: "Too many requests. Please try again later.", status: 429 });
                         setLoading(false);
                         return;
                     }
@@ -94,7 +118,7 @@ export default function UsersPage() {
                     }
                 } catch (err) {
                     console.error("Failed to fetch profile:", err);
-                    setError(err.message || "Failed to load profile.");
+                    setError({ message: err.message || "Failed to load profile.", status: 500 });
                 } finally {
                     setLoading(false);
                 }
@@ -137,21 +161,58 @@ export default function UsersPage() {
     }
 
     if (error) {
+        const isAuthError = error.status === 401;
+        const isForbidden = error.status === 403;
+        const isRateLimit = error.status === 429;
+        
+        let title = "Error Occurred";
+        if (isAuthError) title = "Session Expired";
+        else if (isForbidden) title = "Access Denied";
+        else if (isRateLimit) title = "Too Many Requests";
+
         return (
             <div className="min-h-screen bg-[#09090b] text-[#f4f4f5] flex flex-col justify-center items-center p-6 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(239,68,68,0.08),transparent_40%)]" />
                 <div className="relative z-10 max-w-md w-full bg-zinc-900/60 backdrop-blur-xl border border-red-500/20 rounded-2xl p-8 text-center shadow-2xl">
                     <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
-                        <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
+                        {isRateLimit ? (
+                            <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        ) : (
+                            <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        )}
                     </div>
-                    <h2 className="text-xl font-bold text-red-500 mb-3">Access Denied</h2>
-                    <p className="text-zinc-400 text-sm mb-6 leading-relaxed">{error}</p>
+                    <h2 className={`text-xl font-bold mb-3 ${isRateLimit ? 'text-amber-500' : 'text-red-500'}`}>{title}</h2>
+                    <p className="text-zinc-400 text-sm mb-6 leading-relaxed">{error.message || "Failed to load dashboard."}</p>
                     <div className="flex gap-4 justify-center">
-                        <button onClick={handleLogout} className="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-xl transition font-medium text-sm">
-                            Back to Login
-                        </button>
+                        {isAuthError ? (
+                            <button onClick={handleLogout} className="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-xl transition font-medium text-sm">
+                                Back to Login
+                            </button>
+                        ) : isForbidden ? (
+                            <>
+                                <button onClick={handleLogout} className="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-xl transition font-medium text-sm">
+                                    Log Out
+                                </button>
+                                {currentUser && currentUser.role !== "ADMIN" && (
+                                    <button onClick={() => window.location.reload()} className="px-5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl transition font-medium text-sm">
+                                        Retry
+                                    </button>
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <button onClick={() => window.location.reload()} className="px-5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl transition font-medium text-sm">
+                                    Retry
+                                </button>
+                                <button onClick={handleLogout} className="px-5 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-xl transition font-medium text-sm">
+                                    Back to Login
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>

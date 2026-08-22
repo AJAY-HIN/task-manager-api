@@ -2,9 +2,18 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const nodeEnv = process.env.NODE_ENV || 'development';
+const port = Number(process.env.PORT) || 5000;
+const frontendOrigin = process.env.FRONTEND_ORIGIN;
+
+if (!frontendOrigin) {
+  throw new Error('FRONTEND_ORIGIN is not configured');
+}
+
 module.exports = {
-  nodeEnv: process.env.NODE_ENV,
-  port: Number(process.env.PORT),
+  nodeEnv,
+  port,
+  frontendOrigin,
 
   database: {
     host: process.env.DB_HOST,
