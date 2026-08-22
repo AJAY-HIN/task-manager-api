@@ -274,7 +274,7 @@ export default function UsersPage() {
                                     <tbody className="divide-y divide-zinc-800/40 text-sm">
                                         {filteredUsers.length > 0 ? (
                                             filteredUsers.map((user) => (
-                                                <tr key={user.id} className="hover:bg-zinc-800/20 transition-colors group">
+                                                <tr key={user.id} onClick={() => router.push(`/users/${user.id}`)} className="hover:bg-zinc-800/20 transition-colors group cursor-pointer">
                                                     <td className="py-4 px-6 flex items-center gap-3">
                                                         <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-300 font-bold border border-zinc-700/60 group-hover:border-violet-500/40 transition">
                                                             {user.name ? user.name.charAt(0).toUpperCase() : "?"}

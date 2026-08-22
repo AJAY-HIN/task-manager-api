@@ -5,9 +5,11 @@ const requestTimeMiddleware = require('./middlewares/requestTime.middleware');
 
 const routes = require('./routes');
 const errorHandler = require('./middlewares/error.middleware');
+const helmet = require('helmet');
 
 const app = express();
 
+app.use(helmet());
 app.use(express.json());
 
 // CORS Middleware
