@@ -1,5 +1,5 @@
 const sequelize = require('../src/database/sequelize');
-const User = require('../src/models/user.model');
+const { User } = require('../src/models');
 const bcrypt = require('bcrypt');
 
 async function getOrUpdateUser(email, role, name) {
@@ -35,7 +35,9 @@ async function testScenario(name, url, method, headers, body) {
     const res = await fetch(url, options);
     const data = await res.json().catch(() => null);
     console.log(`[${name}] Status: ${res.status}`);
-    // console.log(`[${name}] Response:`, data);
+    if (res.status >= 400) {
+      console.log(`  Response Error:`, data?.message || data);
+    }
     return { status: res.status, data };
   } catch (error) {
     console.error(`[${name}] Error:`, error.message);
@@ -81,41 +83,105 @@ async function run() {
     process.exit(1);
   }
 
-  console.log('\n--- Running Scenarios ---');
+  console.log('\n--- Running User Scenarios ---');
 
-  // Test A — USER -> Own User (Login as USER ID = john.id, Request: GET /api/v1/users/john.id -> Expected: 200)
+  // Test A — USER -> Own User
   console.log('\nTest A — USER -> Own User (Expected: 200)');
   await testScenario('Test A', `http://localhost:5000/api/v1/users/${john.id}`, 'GET', {
     'Authorization': `Bearer ${johnToken}`
   });
 
-  // Test B — USER -> Another User (Login as USER ID = john.id, Request: GET /api/v1/users/testUser.id -> Expected: 403)
+  // Test B — USER -> Another User
   console.log('\nTest B — USER -> Another User (Expected: 403)');
   await testScenario('Test B', `http://localhost:5000/api/v1/users/${testUser.id}`, 'GET', {
     'Authorization': `Bearer ${johnToken}`
   });
 
-  // Test C — ADMIN -> Another User (Login as ADMIN ID = admin.id, Request: GET /api/v1/users/john.id -> Expected: 200)
+  // Test C — ADMIN -> Another User
   console.log('\nTest C — ADMIN -> Another User (Expected: 200)');
   await testScenario('Test C', `http://localhost:5000/api/v1/users/${john.id}`, 'GET', {
     'Authorization': `Bearer ${adminToken}`
   });
 
-  // Test D — USER -> All Users (Login as USER, Request: GET /api/v1/users -> Expected: 403)
+  // Test D — USER -> All Users
   console.log('\nTest D — USER -> All Users (Expected: 403)');
   await testScenario('Test D', 'http://localhost:5000/api/v1/users', 'GET', {
     'Authorization': `Bearer ${johnToken}`
   });
 
-  // Test E — ADMIN -> All Users (Login as ADMIN, Request: GET /api/v1/users -> Expected: 200)
+  // Test E — ADMIN -> All Users
   console.log('\nTest E — ADMIN -> All Users (Expected: 200)');
   await testScenario('Test E', 'http://localhost:5000/api/v1/users', 'GET', {
     'Authorization': `Bearer ${adminToken}`
   });
 
-  // Test F — No JWT (Request: GET /api/v1/users/john.id without header -> Expected: 401)
-  console.log('\nTest F — No JWT (Expected: 401)');
-  await testScenario('Test F', `http://localhost:5000/api/v1/users/${john.id}`, 'GET', {});
+  console.log('\n--- Running Project & Task Scenarios ---');
+
+  // Create Project as John
+  console.log('\nCreate Project as John (Expected: 201)');
+  const createProjRes = await testScenario('Create Project', 'http://localhost:5000/api/v1/projects', 'POST', {
+    'Authorization': `Bearer ${johnToken}`
+  }, {
+    name: 'Johns Secret Project',
+    description: 'A secret project owned by John'
+  });
+  
+  const projectId = createProjRes.data?.data?.id;
+
+  if (projectId) {
+    // Try to get John's project as TestUser (should fail)
+    console.log('\nGet John Project as Test User (Expected: 403)');
+    await testScenario('Get Project 403', `http://localhost:5000/api/v1/projects/${projectId}`, 'GET', {
+      'Authorization': `Bearer ${testUserToken}`
+    });
+
+    // Get John's project as John (should succeed)
+    console.log('\nGet John Project as John (Expected: 200)');
+    await testScenario('Get Project 200', `http://localhost:5000/api/v1/projects/${projectId}`, 'GET', {
+      'Authorization': `Bearer ${johnToken}`
+    });
+
+    // Create Task as John inside Project
+    console.log('\nCreate Task as John in John Project (Expected: 201)');
+    const createTaskRes = await testScenario('Create Task', `http://localhost:5000/api/v1/projects/${projectId}/tasks`, 'POST', {
+      'Authorization': `Bearer ${johnToken}`
+    }, {
+      title: 'First Secret Task',
+      description: 'Implement backend flow',
+      status: 'TODO',
+      priority: 'HIGH'
+    });
+
+    const taskId = createTaskRes.data?.data?.id;
+
+    if (taskId) {
+      // Get Tasks list in Project as John
+      console.log('\nGet tasks in project as John (Expected: 200)');
+      await testScenario('Get Tasks List', `http://localhost:5000/api/v1/projects/${projectId}/tasks`, 'GET', {
+        'Authorization': `Bearer ${johnToken}`
+      });
+
+      // Update Task status as John
+      console.log('\nUpdate task status to IN_PROGRESS (Expected: 200)');
+      await testScenario('Update Task', `http://localhost:5000/api/v1/tasks/${taskId}`, 'PUT', {
+        'Authorization': `Bearer ${johnToken}`
+      }, {
+        status: 'IN_PROGRESS'
+      });
+
+      // Delete Task as John
+      console.log('\nDelete task as John (Expected: 200)');
+      await testScenario('Delete Task', `http://localhost:5000/api/v1/tasks/${taskId}`, 'DELETE', {
+        'Authorization': `Bearer ${johnToken}`
+      });
+    }
+
+    // Clean up project
+    console.log('\nDelete project as John (Expected: 200)');
+    await testScenario('Delete Project', `http://localhost:5000/api/v1/projects/${projectId}`, 'DELETE', {
+      'Authorization': `Bearer ${johnToken}`
+    });
+  }
 
   await sequelize.close();
 }

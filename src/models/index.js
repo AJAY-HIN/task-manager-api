@@ -1,18 +1,11 @@
-const User = require('./user.model');
-const RefreshToken = require('./refresh-token.model');
-
-User.hasMany(RefreshToken, {
-  foreignKey: 'userId',
-  as: 'refreshTokens',
-  onDelete: 'CASCADE',
-});
-
-RefreshToken.belongsTo(User, {
-  foreignKey: 'userId',
-  as: 'user',
-});
+const User = require('./User');
+const RefreshToken = require('./RefreshToken');
+const Project = require('./Project');
+const Task = require('./Task');
 
 module.exports = {
   User,
   RefreshToken,
+  Project,
+  Task,
 };
