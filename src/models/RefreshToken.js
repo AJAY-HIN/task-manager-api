@@ -5,16 +5,16 @@ const RefreshToken = sequelize.define(
   'RefreshToken',
   {
     id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
     tokenHash: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
     expiresAt: {
@@ -29,6 +29,7 @@ const RefreshToken = sequelize.define(
   {
     tableName: 'refresh_tokens',
     timestamps: true,
+    underscored: true,
   }
 );
 

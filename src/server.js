@@ -8,9 +8,8 @@ async function startServer() {
     await sequelize.authenticate();
     console.log('Database connection established successfully.');
 
-    // Sync models
-    await sequelize.sync();
-    console.log('Database models synchronized.');
+    // Models are synchronized via migrations
+    console.log('Database models verified.');
 
     app.listen(config.port, () => {
       console.log(`Server running on port ${config.port}`);

@@ -1,8 +1,8 @@
 const ForbiddenError = require('../errors/ForbiddenError');
 
 function checkOwnership(req, res, next) {
-  const requestedUserId = Number(req.params.id);
-  const authenticatedUserId = Number(req.user.id);
+  const requestedUserId = req.params.id;
+  const authenticatedUserId = req.user.id;
 
   // Administrators can access any resource.
   if (req.user.role === 'ADMIN') {

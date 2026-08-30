@@ -5,12 +5,12 @@ const Project = sequelize.define(
   'Project',
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      autoIncrement: true,
     },
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(150),
       allowNull: false,
     },
     description: {
@@ -18,13 +18,14 @@ const Project = sequelize.define(
       allowNull: true,
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
     },
   },
   {
     tableName: 'projects',
     timestamps: true,
+    underscored: true,
   }
 );
 

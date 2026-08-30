@@ -5,22 +5,23 @@ const User = sequelize.define(
   'User',
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      autoIncrement: true,
     },
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     email: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
       unique: true,
     },
     password: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
       allowNull: false,
+      field: 'password_hash',
     },
     role: {
       type: DataTypes.ENUM('USER', 'ADMIN'),
@@ -31,6 +32,7 @@ const User = sequelize.define(
   {
     tableName: 'users',
     timestamps: true,
+    underscored: true,
   }
 );
 

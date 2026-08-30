@@ -5,12 +5,20 @@ const Task = sequelize.define(
   'Task',
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      autoIncrement: true,
+    },
+    projectId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    assigneeId: {
+      type: DataTypes.UUID,
+      allowNull: true,
     },
     title: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(200),
       allowNull: false,
     },
     description: {
@@ -31,18 +39,11 @@ const Task = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
-    projectId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    assigneeId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
   },
   {
     tableName: 'tasks',
     timestamps: true,
+    underscored: true,
   }
 );
 
